@@ -35,21 +35,14 @@ export type DataTableProps = {
 };
 
 export const DataTable = component$<DataTableProps>((props) => {
-  // const tableState = useStore(props.initialTableState ?? {
-  //   columnPinning: {
-  //     left: [],
-  //     right: [],
-  //   },
-  // });
-
   return (
-    <div class="space-y-4 w-fit">
-      <div class="flex items-center justify-between">
-        <div class="flex flex-1">{props.toolbar}</div>
-        {/* <DataTableViewOptions table={table} /> */}
-      </div>
+    <div class="w-fit space-y-4">
+      {props.toolbar}
       <div
-        class={cn('overflow-x-auto max-w-[1920px] min-w-[1024px]', props.container?.class)}
+        class={cn(
+          'min-w-[1024px] max-w-[1920px] overflow-x-auto',
+          props.container?.class,
+        )}
         style={props.container?.style}
       >
         <table class="table">

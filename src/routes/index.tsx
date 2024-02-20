@@ -1,5 +1,11 @@
-import { component$ } from '@builder.io/qwik';
+import { type JSXOutput, component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
+import {
+  LuCheckCircle2,
+  LuHelpCircle,
+  LuTimer,
+  LuXCircle,
+} from '@qwikest/icons/lucide';
 import { type ColumnDef, DataTable } from '@/components/data-table';
 import { UserNav } from '@/components/common/user-nav';
 
@@ -10,8 +16,8 @@ const tasks = [
     type: 'bug' as const,
     title: 'Design a new website',
     assignee: 'John Doe',
-    status: 'In Progress',
-    dueDate: '2021-10-01',
+    status: 'in-progress' as const,
+    dueDate: new Date('2021-10-01'),
   },
   {
     id: 2,
@@ -19,8 +25,8 @@ const tasks = [
     type: 'task' as const,
     title: 'Create a new logo',
     assignee: 'John Doe',
-    status: 'In Progress',
-    dueDate: '2021-10-01',
+    status: 'backlog' as const,
+    dueDate: new Date('2021-10-01'),
   },
   {
     id: 3,
@@ -28,8 +34,8 @@ const tasks = [
     type: 'feat' as const,
     title: 'Code up a homepage',
     assignee: 'John Doe',
-    status: 'In Progress',
-    dueDate: '2021-10-01',
+    status: 'done' as const,
+    dueDate: new Date('2021-10-01'),
   },
   {
     id: 4,
@@ -37,8 +43,8 @@ const tasks = [
     type: 'bug' as const,
     title: 'Write a blog post',
     assignee: 'John Doe',
-    status: 'In Progress',
-    dueDate: '2021-10-01',
+    status: 'canceled' as const,
+    dueDate: new Date('2021-10-01'),
   },
 ];
 
@@ -49,6 +55,16 @@ const TASK_TYPE_MAPPER: Record<
   bug: { title: 'Bug', color: 'error' },
   task: { title: 'Task', color: 'info' },
   feat: { title: 'Feature', color: 'success' },
+};
+
+const STATUS_MAPPER: Record<
+  (typeof tasks)[number]['status'],
+  { icon: JSXOutput; title: string }
+> = {
+  'in-progress': { icon: <LuTimer class="h-5 w-5" />, title: 'In Progress' },
+  backlog: { icon: <LuHelpCircle class="h-5 w-5" />, title: 'Backlog' },
+  done: { icon: <LuCheckCircle2 class="h-5 w-5" />, title: 'Done' },
+  canceled: { icon: <LuXCircle class="h-5 w-5" />, title: 'Canceled' },
 };
 
 const columns: ColumnDef<(typeof tasks)[number]>[] = [
@@ -95,13 +111,24 @@ const columns: ColumnDef<(typeof tasks)[number]>[] = [
   },
   {
     id: 'status',
-    cell: component$((props) => <span>{props.row.status}</span>),
+    cell: component$((props) => (
+      <span class="flex gap-2">
+        {STATUS_MAPPER[props.row.status].icon}
+        {STATUS_MAPPER[props.row.status].title}
+      </span>
+    )),
     header: component$(() => <span>Status</span>),
     class: 'w-40',
   },
   {
     id: 'dueDate',
-    cell: component$((props) => <span>{props.row.dueDate}</span>),
+    cell: component$((props) => (
+      <span>
+        {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(
+          props.row.dueDate,
+        )}
+      </span>
+    )),
     header: component$(() => <span>Due Date</span>),
     class: 'w-40',
   },
