@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
-import { Shortcut } from '../../ui/shortcut';
+import { Shortcut } from '@/components/ui/shortcut';
 
 export const UserNav = component$(() => {
   return (

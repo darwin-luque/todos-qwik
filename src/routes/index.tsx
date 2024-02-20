@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { UserNav } from '../components/common/user-nav';
+import { UserNav } from '@/components/common/user-nav';
 
 export default component$(() => {
   return (

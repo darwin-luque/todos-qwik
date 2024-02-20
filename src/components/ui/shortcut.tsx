@@ -1,5 +1,5 @@
 import { Slot, component$ } from '@builder.io/qwik';
-import { cn } from '../../lib/utils/tailwind-helpers';
+import { cn } from '@/lib/utils';
 
 type ShortcutProps = {
   class?: string;

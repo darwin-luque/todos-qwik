@@ -17,9 +17,11 @@
     "outDir": "tmp",
     "noEmit": true,
     "types": ["node", "vite/client"],
+    /* Path Aliases */
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
-    },
+      "@/*": ["./src/*"]
+    }
   },
   "files": ["./.eslintrc.cjs"],
   "include": [
