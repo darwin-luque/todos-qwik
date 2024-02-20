@@ -1,1 +1,1 @@
-export * from './tailwind-helpers';
+export * from './tailwind.helpers';
