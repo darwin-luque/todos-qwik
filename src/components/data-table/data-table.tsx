@@ -2,22 +2,30 @@ import type {
   JSXOutput,
   CSSProperties,
   FunctionComponent,
+  QRL,
 } from '@builder.io/qwik';
-import { component$ } from '@builder.io/qwik';
+import { $, component$, useStore } from '@builder.io/qwik';
 import { cn } from '@/lib/utils';
 
 export type DataStructure<T> = {
-  id: string;
+  id: string | number;
+  selected?: boolean;
 } & T;
+
 
 export type CellContext<T> = {
   row: DataStructure<T>;
 };
 
+export type HeaderContext = {
+  areAllSelected: boolean;
+  selectAll: QRL<() => void>;
+};
+
 export type ColumnDef<T> = {
   id: string;
   cell: FunctionComponent<CellContext<DataStructure<T>>>;
-  header: FunctionComponent;
+  header: FunctionComponent<HeaderContext>;
   colSpan?: number;
   style?: CSSProperties;
   class?: string;
@@ -25,7 +33,7 @@ export type ColumnDef<T> = {
 
 export type DataTableProps = {
   columns: ColumnDef<any>[];
-  data: any[];
+  data: DataStructure<unknown>[];
   // initialTableState?: Partial<TableState>;
   toolbar?: JSXOutput;
   container?: {
@@ -35,6 +43,15 @@ export type DataTableProps = {
 };
 
 export const DataTable = component$<DataTableProps>((props) => {
+  const data = useStore(() =>
+    props.data.map((v) => ({ ...v, selected: false })),
+  );
+
+  const selectAll = $(async () => {
+    const areAllSelected = data.every((v) => !!v.selected);
+    data.forEach((v) => (v.selected = !areAllSelected));
+  });
+
   return (
     <div class="w-fit space-y-4">
       {props.toolbar}
@@ -56,15 +73,18 @@ export const DataTable = component$<DataTableProps>((props) => {
                     colSpan={column.colSpan ?? 1}
                     style={column.style}
                   >
-                    <column.header />
+                    <column.header
+                      areAllSelected={data.every((v) => !!v.selected)}
+                      selectAll={selectAll}
+                    />
                   </th>
                 );
               })}
             </tr>
           </thead>
           <tbody>
-            {props.data.length > 0 ? (
-              props.data.map((row) => (
+            {data.length > 0 ? (
+              data.map((row) => (
                 <tr class="border-neutral" key={row.id}>
                   {props.columns.map((column) => {
                     return (

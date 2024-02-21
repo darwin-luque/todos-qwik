@@ -1,138 +1,7 @@
-import { type JSXOutput, component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import {
-  LuCheckCircle2,
-  LuHelpCircle,
-  LuTimer,
-  LuXCircle,
-} from '@qwikest/icons/lucide';
-import { type ColumnDef, DataTable } from '@/components/data-table';
+import { component$ } from '@builder.io/qwik';
+import { TasksTable } from '@/components/tasks/table';
 import { UserNav } from '@/components/common/user-nav';
-
-const tasks = [
-  {
-    id: 1,
-    code: 'TASK-1021',
-    type: 'bug' as const,
-    title: 'Design a new website',
-    assignee: 'John Doe',
-    status: 'in-progress' as const,
-    dueDate: new Date('2021-10-01'),
-  },
-  {
-    id: 2,
-    code: 'TASK-1022',
-    type: 'task' as const,
-    title: 'Create a new logo',
-    assignee: 'John Doe',
-    status: 'backlog' as const,
-    dueDate: new Date('2021-10-01'),
-  },
-  {
-    id: 3,
-    code: 'TASK-1023',
-    type: 'feat' as const,
-    title: 'Code up a homepage',
-    assignee: 'John Doe',
-    status: 'done' as const,
-    dueDate: new Date('2021-10-01'),
-  },
-  {
-    id: 4,
-    code: 'TASK-1024',
-    type: 'bug' as const,
-    title: 'Write a blog post',
-    assignee: 'John Doe',
-    status: 'canceled' as const,
-    dueDate: new Date('2021-10-01'),
-  },
-];
-
-const TASK_TYPE_MAPPER: Record<
-  (typeof tasks)[number]['type'],
-  { title: string; color: string }
-> = {
-  bug: { title: 'Bug', color: 'error' },
-  task: { title: 'Task', color: 'info' },
-  feat: { title: 'Feature', color: 'success' },
-};
-
-const STATUS_MAPPER: Record<
-  (typeof tasks)[number]['status'],
-  { icon: JSXOutput; title: string }
-> = {
-  'in-progress': { icon: <LuTimer class="h-5 w-5" />, title: 'In Progress' },
-  backlog: { icon: <LuHelpCircle class="h-5 w-5" />, title: 'Backlog' },
-  done: { icon: <LuCheckCircle2 class="h-5 w-5" />, title: 'Done' },
-  canceled: { icon: <LuXCircle class="h-5 w-5" />, title: 'Canceled' },
-};
-
-const columns: ColumnDef<(typeof tasks)[number]>[] = [
-  {
-    id: 'checkbox',
-    cell: component$(() => (
-      <label>
-        <input type="checkbox" class="checkbox" />
-      </label>
-    )),
-    header: component$(() => (
-      <label>
-        <input type="checkbox" class="checkbox" />
-      </label>
-    )),
-    class: 'w-2',
-  },
-  {
-    id: 'code',
-    cell: component$((props) => <span>{props.row.code}</span>),
-    header: component$(() => <span>Code</span>),
-    class: 'w-36',
-  },
-  {
-    id: 'title',
-    cell: component$((props) => (
-      <span>
-        <span
-          class={`badge badge-outline badge-sm mr-2 opacity-50 badge-${TASK_TYPE_MAPPER[props.row.type].color}`}
-        >
-          {TASK_TYPE_MAPPER[props.row.type].title}
-        </span>
-        {props.row.title}
-      </span>
-    )),
-    header: component$(() => <span>Title</span>),
-    class: 'w-[800px]',
-  },
-  {
-    id: 'assignee',
-    cell: component$((props) => <span>{props.row.assignee}</span>),
-    header: component$(() => <span>Assignee</span>),
-    class: 'w-40',
-  },
-  {
-    id: 'status',
-    cell: component$((props) => (
-      <span class="flex gap-2">
-        {STATUS_MAPPER[props.row.status].icon}
-        {STATUS_MAPPER[props.row.status].title}
-      </span>
-    )),
-    header: component$(() => <span>Status</span>),
-    class: 'w-40',
-  },
-  {
-    id: 'dueDate',
-    cell: component$((props) => (
-      <span>
-        {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(
-          props.row.dueDate,
-        )}
-      </span>
-    )),
-    header: component$(() => <span>Due Date</span>),
-    class: 'w-40',
-  },
-];
 
 export default component$(() => {
   return (
@@ -147,22 +16,18 @@ export default component$(() => {
         </div>
       </div>
       <div class="flex w-full flex-col items-center">
-        <DataTable
-          columns={columns}
-          data={tasks}
-          container={{ class: 'border border-neutral w-fit' }}
-        />
+        <TasksTable />
       </div>
     </>
   );
 });
 
 export const head: DocumentHead = {
-  title: 'Welcome to Qwik',
+  title: 'Task Manager',
   meta: [
     {
       name: 'description',
-      content: 'Qwik site description',
+      content: 'This is a mock website to test Qwik features.',
     },
   ],
 };
