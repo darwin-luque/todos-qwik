@@ -3,6 +3,7 @@ import { DataTable } from '@/components/data-table';
 import { getTasks } from '@/server/tasks';
 import { columns } from './columns';
 import { LuLoader2 } from '@qwikest/icons/lucide';
+import { TasksTableToolbar } from './toolbar';
 
 export const TasksTable = component$(() => {
   const tasks = getTasks();
@@ -20,6 +21,7 @@ export const TasksTable = component$(() => {
           columns={columns}
           data={resolvedTasks}
           container={{ class: 'border border-neutral w-fit' }}
+          Toolbar={TasksTableToolbar}
         />
       )}
       onRejected={(error) => <div>{error.message}</div>}

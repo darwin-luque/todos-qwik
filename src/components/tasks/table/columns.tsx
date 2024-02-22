@@ -96,7 +96,7 @@ export const columns: ColumnDef<Task>[] = [
     isHidable: true,
   },
   {
-    id: 'dueDate',
+    id: 'due date',
     cell: component$((props) => (
       <span>
         {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(

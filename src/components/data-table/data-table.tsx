@@ -1,17 +1,20 @@
 import type {
-  JSXOutput,
   CSSProperties,
   FunctionComponent,
   QRL,
+  Component,
 } from '@builder.io/qwik';
 import { $, component$, useStore } from '@builder.io/qwik';
 import { cn } from '@/lib/utils';
+
+export type TableState = {
+  hiddenColumns: string[];
+};
 
 export type DataStructure<T> = {
   id: string | number;
   selected?: boolean;
 } & T;
-
 
 export type CellContext<T> = {
   row: DataStructure<T>;
@@ -37,21 +40,34 @@ export type ColumnDef<T> = BaseColumnDef & {
   header: FunctionComponent<HeaderContext>;
 };
 
+export type ToolbarProps<T> = {
+  columns: ColumnDef<T>[];
+  state: TableState;
+};
+
 export type DataTableProps = {
   columns: ColumnDef<any>[];
   data: DataStructure<unknown>[];
-  // initialTableState?: Partial<TableState>;
-  toolbar?: JSXOutput;
+  initialTableState?: Partial<TableState>;
+  Toolbar?: Component<ToolbarProps<any>>;
   container?: {
     style?: CSSProperties;
     class?: string;
   };
 };
 
+const defaultInitialState: TableState = {
+  hiddenColumns: [],
+};
+
 export const DataTable = component$<DataTableProps>((props) => {
   const data = useStore(() =>
     props.data.map((v) => ({ ...v, selected: false })),
   );
+  const state = useStore<TableState>(() => ({
+    ...defaultInitialState,
+    ...props.initialTableState,
+  }));
 
   const selectAll = $(async () => {
     const areAllSelected = data.every((v) => !!v.selected);
@@ -60,7 +76,9 @@ export const DataTable = component$<DataTableProps>((props) => {
 
   return (
     <div class="w-fit space-y-4">
-      {props.toolbar}
+      {props.Toolbar ? (
+        <props.Toolbar state={state} columns={props.columns} />
+      ) : null}
       <div
         class={cn(
           'min-w-[1024px] max-w-[1920px] overflow-x-auto',
@@ -71,40 +89,44 @@ export const DataTable = component$<DataTableProps>((props) => {
         <table class="table">
           <thead>
             <tr class="border-neutral">
-              {props.columns.map((column) => {
-                return (
-                  <th
-                    key={column.id}
-                    class={column.class}
-                    colSpan={column.colSpan ?? 1}
-                    style={column.style}
-                  >
-                    <column.header
-                      areAllSelected={data.every((v) => !!v.selected)}
-                      selectAll={selectAll}
-                      column={column}
-                    />
-                  </th>
-                );
-              })}
+              {props.columns
+                .filter((c) => !state.hiddenColumns.includes(c.id))
+                .map((column) => {
+                  return (
+                    <th
+                      key={column.id}
+                      class={column.class}
+                      colSpan={column.colSpan ?? 1}
+                      style={column.style}
+                    >
+                      <column.header
+                        areAllSelected={data.every((v) => !!v.selected)}
+                        selectAll={selectAll}
+                        column={column}
+                      />
+                    </th>
+                  );
+                })}
             </tr>
           </thead>
           <tbody>
             {data.length > 0 ? (
               data.map((row) => (
                 <tr class="border-neutral" key={row.id}>
-                  {props.columns.map((column) => {
-                    return (
-                      <td
-                        key={column.id}
-                        style={column.style}
-                        class={column.class}
-                        colSpan={column.colSpan ?? 1}
-                      >
-                        <column.cell row={row} />
-                      </td>
-                    );
-                  })}
+                  {props.columns
+                    .filter((c) => !state.hiddenColumns.includes(c.id))
+                    .map((column) => {
+                      return (
+                        <td
+                          key={column.id}
+                          style={column.style}
+                          class={column.class}
+                          colSpan={column.colSpan ?? 1}
+                        >
+                          <column.cell row={row} />
+                        </td>
+                      );
+                    })}
                 </tr>
               ))
             ) : (
