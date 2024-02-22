@@ -17,18 +17,24 @@ export type CellContext<T> = {
   row: DataStructure<T>;
 };
 
+export type BaseColumnDef = {
+  id: string;
+  isSortable?: boolean;
+  isHidable?: boolean;
+  colSpan?: number;
+  style?: CSSProperties;
+  class?: string;
+};
+
 export type HeaderContext = {
+  column: BaseColumnDef;
   areAllSelected: boolean;
   selectAll: QRL<() => void>;
 };
 
-export type ColumnDef<T> = {
-  id: string;
+export type ColumnDef<T> = BaseColumnDef & {
   cell: FunctionComponent<CellContext<DataStructure<T>>>;
   header: FunctionComponent<HeaderContext>;
-  colSpan?: number;
-  style?: CSSProperties;
-  class?: string;
 };
 
 export type DataTableProps = {
@@ -76,6 +82,7 @@ export const DataTable = component$<DataTableProps>((props) => {
                     <column.header
                       areAllSelected={data.every((v) => !!v.selected)}
                       selectAll={selectAll}
+                      column={column}
                     />
                   </th>
                 );

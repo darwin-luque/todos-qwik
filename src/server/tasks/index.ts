@@ -1,3 +1,5 @@
+import { server$ } from "@builder.io/qwik-city";
+
 export const tasks = [
   {
     id: 1,
@@ -38,3 +40,5 @@ export const tasks = [
 ];
 
 export type Task = (typeof tasks)[number];
+
+export const getTasks = server$(async () => tasks);

@@ -7,6 +7,7 @@ import {
 import { type JSXOutput, component$ } from '@builder.io/qwik';
 import { type ColumnDef } from '@/components/data-table';
 import { type Task } from '@/server/tasks';
+import { ColumnHeader } from '../../data-table/column-header';
 
 const TASK_TYPE_MAPPER: Record<Task['type'], { title: string; color: string }> =
   {
@@ -53,8 +54,10 @@ export const columns: ColumnDef<Task>[] = [
   {
     id: 'code',
     cell: component$((props) => <span>{props.row.code}</span>),
-    header: component$(() => <span>Code</span>),
+    header: component$((props) => <ColumnHeader title="Code" header={props} />),
     class: 'w-36',
+    isSortable: true,
+    isHidable: true,
   },
   {
     id: 'title',
@@ -68,14 +71,17 @@ export const columns: ColumnDef<Task>[] = [
         {props.row.title}
       </span>
     )),
-    header: component$(() => <span>Title</span>),
+    header: component$((props) => <ColumnHeader title="Title" header={props} />),
+    isSortable: true,
     class: 'w-[800px]',
   },
   {
     id: 'assignee',
     cell: component$((props) => <span>{props.row.assignee}</span>),
-    header: component$(() => <span>Assignee</span>),
+    header: component$((props) => <ColumnHeader title="Assignee" header={props} />),
     class: 'w-40',
+    isSortable: true,
+    isHidable: true,
   },
   {
     id: 'status',
@@ -85,8 +91,9 @@ export const columns: ColumnDef<Task>[] = [
         {STATUS_MAPPER[props.row.status].title}
       </span>
     )),
-    header: component$(() => <span>Status</span>),
+    header: component$((props) => <ColumnHeader title="Status" header={props} />),
     class: 'w-40',
+    isHidable: true,
   },
   {
     id: 'dueDate',
@@ -97,7 +104,9 @@ export const columns: ColumnDef<Task>[] = [
         )}
       </span>
     )),
-    header: component$(() => <span>Due Date</span>),
+    header: component$((props) => <ColumnHeader title="Due Date" header={props} />),
     class: 'w-40',
+    isSortable: true,
+    isHidable: true,
   },
 ];
