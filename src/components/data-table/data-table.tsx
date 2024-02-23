@@ -9,15 +9,16 @@ import { cn } from '@/lib/utils';
 
 export type TableState = {
   hiddenColumns: string[];
+  selectedColumns: (string | number)[];
 };
 
 export type DataStructure<T> = {
   id: string | number;
-  selected?: boolean;
 } & T;
 
 export type CellContext<T> = {
   row: DataStructure<T>;
+  state: TableState;
 };
 
 export type BaseColumnDef = {
@@ -31,6 +32,7 @@ export type BaseColumnDef = {
 
 export type HeaderContext = {
   column: BaseColumnDef;
+  state: TableState;
   areAllSelected: boolean;
   selectAll: QRL<() => void>;
 };
@@ -58,20 +60,21 @@ export type DataTableProps = {
 
 const defaultInitialState: TableState = {
   hiddenColumns: [],
+  selectedColumns: [],
 };
 
 export const DataTable = component$<DataTableProps>((props) => {
-  const data = useStore(() =>
-    props.data.map((v) => ({ ...v, selected: false })),
-  );
   const state = useStore<TableState>(() => ({
     ...defaultInitialState,
     ...props.initialTableState,
   }));
+  const data = useStore(() => props.data);
 
   const selectAll = $(async () => {
-    const areAllSelected = data.every((v) => !!v.selected);
-    data.forEach((v) => (v.selected = !areAllSelected));
+    const areAllSelected = data.every((v) =>
+      state.selectedColumns.includes(v.id),
+    );
+    state.selectedColumns = areAllSelected ? [] : data.map((v) => v.id);
   });
 
   return (
@@ -100,7 +103,10 @@ export const DataTable = component$<DataTableProps>((props) => {
                       style={column.style}
                     >
                       <column.header
-                        areAllSelected={data.every((v) => !!v.selected)}
+                        areAllSelected={data.every((v) =>
+                          state.selectedColumns.includes(v.id),
+                        )}
+                        state={state}
                         selectAll={selectAll}
                         column={column}
                       />
@@ -123,7 +129,7 @@ export const DataTable = component$<DataTableProps>((props) => {
                           class={column.class}
                           colSpan={column.colSpan ?? 1}
                         >
-                          <column.cell row={row} />
+                          <column.cell row={row} state={state} />
                         </td>
                       );
                     })}

@@ -34,8 +34,17 @@ export const columns: ColumnDef<Task>[] = [
         <input
           type="checkbox"
           class="checkbox"
-          checked={!!props.row.selected}
-          onChange$={() => (props.row.selected = !props.row.selected)}
+          checked={props.state.selectedColumns.some(
+            (id) => id === props.row.id,
+          )}
+          onChange$={() =>
+            props.state.selectedColumns.includes(props.row.id)
+              ? (props.state.selectedColumns =
+                  props.state.selectedColumns.filter(
+                    (id) => id !== props.row.id,
+                  ))
+              : props.state.selectedColumns.push(props.row.id)
+          }
         />
       </label>
     )),
@@ -71,14 +80,18 @@ export const columns: ColumnDef<Task>[] = [
         {props.row.title}
       </span>
     )),
-    header: component$((props) => <ColumnHeader title="Title" header={props} />),
+    header: component$((props) => (
+      <ColumnHeader title="Title" header={props} />
+    )),
     isSortable: true,
     class: 'w-[800px]',
   },
   {
     id: 'assignee',
     cell: component$((props) => <span>{props.row.assignee}</span>),
-    header: component$((props) => <ColumnHeader title="Assignee" header={props} />),
+    header: component$((props) => (
+      <ColumnHeader title="Assignee" header={props} />
+    )),
     class: 'w-40',
     isSortable: true,
     isHidable: true,
@@ -91,7 +104,9 @@ export const columns: ColumnDef<Task>[] = [
         {STATUS_MAPPER[props.row.status].title}
       </span>
     )),
-    header: component$((props) => <ColumnHeader title="Status" header={props} />),
+    header: component$((props) => (
+      <ColumnHeader title="Status" header={props} />
+    )),
     class: 'w-40',
     isHidable: true,
   },
@@ -104,7 +119,9 @@ export const columns: ColumnDef<Task>[] = [
         )}
       </span>
     )),
-    header: component$((props) => <ColumnHeader title="Due Date" header={props} />),
+    header: component$((props) => (
+      <ColumnHeader title="Due Date" header={props} />
+    )),
     class: 'w-40',
     isSortable: true,
     isHidable: true,

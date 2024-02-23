@@ -28,7 +28,7 @@ export const ColumnHeader = component$<ColumnHeaderProps>((props) => {
         <div
           tabIndex={0}
           role="button"
-          class="btn btn-ghost h-8 min-h-fit gap-0 px-2 py-0"
+          class="btn btn-ghost h-8 min-h-fit gap-0 p-0"
         >
           <span>{props.title}</span>
           <LuChevronsUpDown class="ml-2 h-4 w-4" />
