@@ -7,9 +7,15 @@ import type {
 import { $, component$, useStore } from '@builder.io/qwik';
 import { cn } from '@/lib/utils';
 
+export type TableSort = {
+  columnId: string;
+  direction: 'asc' | 'desc';
+};
+
 export type TableState = {
   hiddenColumns: string[];
   selectedColumns: (string | number)[];
+  sort?: TableSort;
 };
 
 export type DataStructure<T> = {

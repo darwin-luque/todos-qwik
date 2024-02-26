@@ -31,22 +31,46 @@ export const ColumnHeader = component$<ColumnHeaderProps>((props) => {
           class="btn btn-ghost h-8 min-h-fit gap-0 p-0"
         >
           <span>{props.title}</span>
-          <LuChevronsUpDown class="ml-2 h-4 w-4" />
+          {props.header.state.sort?.columnId === props.header.column.id ? (
+            props.header.state.sort.direction === 'asc' ? (
+              <LuChevronUp class="ml-2 h-4 w-4" />
+            ) : (
+              <LuChevronDown class="ml-2 h-4 w-4" />
+            )
+          ) : (
+            <LuChevronsUpDown class="ml-2 h-4 w-4" />
+          )}
         </div>
         <ul class="menu dropdown-content z-50 w-28 rounded-md border border-neutral bg-base-100 p-0">
           {props.header.column.isSortable ? (
             <>
               <li>
-                <div class="btn btn-ghost m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2">
+                <button
+                  onClick$={() =>
+                    (props.header.state.sort = {
+                      columnId: props.header.column.id,
+                      direction: 'asc',
+                    })
+                  }
+                  class="btn btn-ghost btn-sm m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2"
+                >
                   <LuChevronUp class="mr-2 h-3.5 w-3.5 text-gray-600/70" />
                   Asc
-                </div>
+                </button>
               </li>
               <li>
-                <div class="btn btn-ghost m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2">
+                <button
+                  onClick$={() =>
+                    (props.header.state.sort = {
+                      columnId: props.header.column.id,
+                      direction: 'desc',
+                    })
+                  }
+                  class="btn btn-ghost btn-sm m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2"
+                >
                   <LuChevronDown class="mr-2 h-3.5 w-3.5 text-gray-600/70" />
                   Desc
-                </div>
+                </button>
               </li>
             </>
           ) : null}
@@ -55,10 +79,15 @@ export const ColumnHeader = component$<ColumnHeaderProps>((props) => {
           ) : null}
           {props.header.column.isHidable ? (
             <li>
-              <div class="btn btn-ghost m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2">
+              <button
+                onClick$={() =>
+                  props.header.state.hiddenColumns.push(props.header.column.id)
+                }
+                class="btn btn-ghost btn-sm m-1 h-fit min-h-fit justify-start gap-0 rounded-sm px-1 py-2"
+              >
                 <LuEyeOff class="mr-2 h-3.5 w-3.5 text-gray-600/70" />
                 Hide
-              </div>
+              </button>
             </li>
           ) : null}
         </ul>
